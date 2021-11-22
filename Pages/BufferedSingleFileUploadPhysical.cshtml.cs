@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.IO.Compression;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using SampleApp.Utilities;
+using SharpGLTF.Schema2;
 
 namespace SampleApp.Pages
 {
@@ -60,7 +62,7 @@ namespace SampleApp.Pages
             // For the file name of the uploaded file stored
             // server-side, use Path.GetRandomFileName to generate a safe
             // random file name.
-            var trustedFileNameForFileStorage = Path.GetRandomFileName();
+            var trustedFileNameForFileStorage = FileUpload.FormFile.FileName;
             var filePath = Path.Combine(
                 _targetFilePath, trustedFileNameForFileStorage);
 
@@ -81,7 +83,20 @@ namespace SampleApp.Pages
                 // instead:
                 //await FileUpload.FormFile.CopyToAsync(fileStream);
             }
-            ZipFile.ExtractToDirectory(filePath, Path.Combine(_targetFilePath, "extracted"));
+            int fCount = 0;
+            try
+            {
+                //fCount = Directory.GetFiles(_targetFilePath + "\\extracted", "*", SearchOption.TopDirectoryOnly).Length;
+                fCount = Directory.GetDirectories(_targetFilePath + "\\extracted").Length;
+            }
+            catch (Exception e)
+            {
+                
+            }
+            var extractedPath = Path.Combine(_targetFilePath, "extracted", fCount.ToString());
+            ZipFile.ExtractToDirectory(filePath, Path.Combine(_targetFilePath, "extracted", extractedPath));
+            var model = ModelRoot.Load(extractedPath + "/scene.gltf");
+            model.SaveGLB(extractedPath + "/model.glb");
             return RedirectToPage("./Index");
         }
     }

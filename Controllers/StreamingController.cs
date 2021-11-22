@@ -258,7 +258,7 @@ namespace SampleApp.Controllers
                         // the file name, HTML-encode the value.
                         var trustedFileNameForDisplay = WebUtility.HtmlEncode(
                                 contentDisposition.FileName.Value);
-                        var trustedFileNameForFileStorage = Path.GetRandomFileName();
+                        var trustedFileNameForFileStorage = contentDisposition.FileName.Value;
 
                         // **WARNING!**
                         // In the following example, the file is saved without
