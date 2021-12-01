@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.FileProviders;
+using System.Collections.Generic;
+using static SampleApp.Pages.BufferedSingleFileUploadPhysical;
 
 namespace SampleApp.Pages
 {
@@ -40,11 +42,18 @@ namespace SampleApp.Pages
             }
 
             RemoveFile = _fileProvider.GetFileInfo(fileName);
-
+            
+            //var RemoveFileExtracted = _fileProvider.GetFileInfo();
+            //Dictionary<int, string> hey = BufferedSingleFileUploadPhysical.directories;
             if (RemoveFile.Exists)
             {
                 System.IO.File.Delete(RemoveFile.PhysicalPath);
             }
+            //if (RemoveFileExtracted.Exists)
+            //{
+                System.IO.Directory.Delete(BufferedSingleFileUploadPhysical.directories[fileName],true);
+            BufferedSingleFileUploadPhysical.directories.Remove(fileName);
+            //}
 
             return RedirectToPage("./Index");
         }

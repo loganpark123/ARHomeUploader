@@ -32,21 +32,24 @@ else
         </thead>
         <tbody>
             @foreach (var file in Model.PhysicalFiles) {
-                <tr>
-                    <td>
-                        <a asp-page="./DeletePhysicalFile" asp-route-fileName="@file.Name">Delete</a>
-                    </td>
-                    <td>
-                        <b>@file.Name</b><br>
-                        @file.PhysicalPath
-                    </td>
-                    <td class="text-center">
-                        @file.Length.ToString("N0")
-                    </td>
-                    <td class="text-center">
-                        <a asp-page-handler="DownloadPhysical" asp-route-fileName="@file.Name">Download</a>
-                    </td>
-                </tr>
+                @if (file.Length != -1)
+                {
+                    <tr>
+                        <td>
+                            <a asp-page="./DeletePhysicalFile" asp-route-fileName="@file.Name">Delete</a>
+                        </td>
+                        <td>
+                            <b>@file.Name</b><br>
+                            @file.PhysicalPath
+                        </td>
+                        <td class="text-center">
+                            @file.Length.ToString("N0")
+                        </td>
+                        <td class="text-center">
+                            <a asp-page-handler="DownloadPhysical" asp-route-fileName="@file.Name">Download</a>
+                        </td>
+                    </tr>
+                }
             }
         </tbody>
     </table>

@@ -26,7 +26,7 @@ namespace SampleApp.Pages
             _targetFilePath = config.GetValue<string>("StoredFilesPath");
         }
 
-        public IList<AppFile> DatabaseFiles { get; private set; }
+        //public IList<AppFile> DatabaseFiles { get; private set; }
         public IDirectoryContents PhysicalFiles { get; private set; }
 
         public async Task OnGet()

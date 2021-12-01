@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.IO.Compression;
@@ -17,7 +18,9 @@ namespace SampleApp.Pages
         private readonly long _fileSizeLimit;
         private readonly string[] _permittedExtensions = { ".txt", ".gltf", ".zip" };
         private readonly string _targetFilePath;
+        //public static Dictionary<int, string> directories { get; private set; }
 
+        
         public BufferedSingleFileUploadPhysicalModel(IConfiguration config)
         {
             _fileSizeLimit = config.GetValue<long>("FileSizeLimit");
@@ -95,6 +98,7 @@ namespace SampleApp.Pages
             }
             var extractedPath = Path.Combine(_targetFilePath, "extracted", fCount.ToString());
             ZipFile.ExtractToDirectory(filePath, Path.Combine(_targetFilePath, "extracted", extractedPath));
+            BufferedSingleFileUploadPhysical.directories.Add(trustedFileNameForFileStorage, extractedPath);
             var model = ModelRoot.Load(extractedPath + "/scene.gltf");
             model.SaveGLB(extractedPath + "/model.glb");
             return RedirectToPage("./Index");
@@ -103,6 +107,8 @@ namespace SampleApp.Pages
 
     public class BufferedSingleFileUploadPhysical
     {
+        public static Dictionary<string, string> directories = new Dictionary<string, string>();
+
         [Required]
         [Display(Name="File")]
         public IFormFile FormFile { get; set; }
