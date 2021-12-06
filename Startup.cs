@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using SampleApp.Data;
 using SampleApp.Filters;
 
 namespace SampleApp
@@ -24,27 +23,7 @@ namespace SampleApp
             services.AddControllers();
 
             #region snippet_AddRazorPages
-            services.AddRazorPages(options =>
-            {
-                options.Conventions
-                    .AddPageApplicationModelConvention("/StreamedSingleFileUploadDb",
-                        model =>
-                        {
-                            model.Filters.Add(
-                                new GenerateAntiforgeryTokenCookieAttribute());
-                            model.Filters.Add(
-                                new DisableFormValueModelBindingAttribute());
-                        });
-                options.Conventions
-                    .AddPageApplicationModelConvention("/StreamedSingleFileUploadPhysical",
-                        model =>
-                        {
-                            model.Filters.Add(
-                                new GenerateAntiforgeryTokenCookieAttribute());
-                            model.Filters.Add(
-                                new DisableFormValueModelBindingAttribute());
-                        });
-            });
+            services.AddRazorPages();
             #endregion
 
             // To list physical files from a path provided by configuration:
@@ -55,7 +34,6 @@ namespace SampleApp
 
             services.AddSingleton<IFileProvider>(physicalProvider);
 
-            services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMemoryDb"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

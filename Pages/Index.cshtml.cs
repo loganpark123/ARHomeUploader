@@ -9,19 +9,18 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
-using SampleApp.Data;
-using SampleApp.Models;
+
 
 namespace SampleApp.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly AppDbContext _context;
+ 
         private readonly IFileProvider _fileProvider;
         private readonly string _targetFilePath;
-        public IndexModel(AppDbContext context, IFileProvider fileProvider, IConfiguration config)
+        public IndexModel(IFileProvider fileProvider, IConfiguration config)
         {
-            _context = context;
+
             _fileProvider = fileProvider;
             _targetFilePath = config.GetValue<string>("StoredFilesPath");
         }
@@ -35,24 +34,8 @@ namespace SampleApp.Pages
             PhysicalFiles = _fileProvider.GetDirectoryContents(string.Empty);
         }
 
-        public async Task<IActionResult> OnGetDownloadDbAsync(int? id)
-        {
-            if (id == null)
-            {
-                return Page();
-            }
-
-            var requestFile = await _context.File.SingleOrDefaultAsync(m => m.Id == id);
-
-            if (requestFile == null)
-            {
-                return Page();
-            }
-
-            // Don't display the untrusted file name in the UI. HTML-encode the value.
-            return File(requestFile.Content, MediaTypeNames.Application.Octet, WebUtility.HtmlEncode(requestFile.UntrustedName));
-        }
-
+        
+        //fetches the file that is described by the filename and then returns it. This allows users to download the original gltf using the UI or the api 
         public IActionResult OnGetDownloadPhysical(string fileName)
         {
             var downloadFile = _fileProvider.GetFileInfo(fileName);
@@ -67,12 +50,16 @@ namespace SampleApp.Pages
         //    return PhysicalFile(downloadFile.PhysicalPath, MediaTypeNames.Application.Octet, fileName + ".glb");
         //}
         //[HttpGet("{id}")]
+
+        //This is the HTTP Get that returns the .glb file. This was better suited for the headset because it only needs to request one file rather than all files in a directory. 
         public IActionResult OnGetDownloadModel(int file)
         {
             var downloadFile = _fileProvider.GetFileInfo("extracted/" + file + "/model.glb");
 
             return PhysicalFile(downloadFile.PhysicalPath, MediaTypeNames.Application.Octet, "model" + file + ".glb");
         }
+
+        //This method returns the number of models in the extracted directory. This way the headset knows how many new files have been uploaded and how many models to request.
         public IActionResult OnGetNumModels()
         {
             int num = Directory.GetDirectories(_targetFilePath + "\\extracted").Length;

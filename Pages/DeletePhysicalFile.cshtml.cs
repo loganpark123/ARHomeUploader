@@ -51,6 +51,7 @@ namespace SampleApp.Pages
             }
             //if (RemoveFileExtracted.Exists)
             //{
+            // delete the extracted files by finding the correct path in the dictionary defined in bufferedSingleFileUploadPhysical.
                 System.IO.Directory.Delete(BufferedSingleFileUploadPhysical.directories[fileName],true);
             BufferedSingleFileUploadPhysical.directories.Remove(fileName);
             //}

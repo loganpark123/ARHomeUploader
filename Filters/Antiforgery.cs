@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 namespace SampleApp.Filters
 {
     #region snippet_GenerateAntiforgeryTokenCookieAttribute
+
+    //This is from the .NET tutorial. It is used for added security, but it is not necessary in this project since it is intended to be used locally.
     public class GenerateAntiforgeryTokenCookieAttribute : ResultFilterAttribute
     {
         public override void OnResultExecuting(ResultExecutingContext context)

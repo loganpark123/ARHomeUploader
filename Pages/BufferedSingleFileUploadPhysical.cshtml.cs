@@ -69,23 +69,13 @@ namespace SampleApp.Pages
             var filePath = Path.Combine(
                 _targetFilePath, trustedFileNameForFileStorage);
 
-            // **WARNING!**
-            // In the following example, the file is saved without
-            // scanning the file's contents. In most production
-            // scenarios, an anti-virus/anti-malware scanner API
-            // is used on the file before making the file available
-            // for download or for use by other systems. 
-            // For more information, see the topic that accompanies 
-            // this sample.
-
+            // Upload file to the default file path from the config
             using (var fileStream = System.IO.File.Create(filePath))
             {
                 await fileStream.WriteAsync(formFileContent);
-                
-                // To work directly with a FormFile, use the following
-                // instead:
-                //await FileUpload.FormFile.CopyToAsync(fileStream);
+               
             }
+            // This is the count of files that have been uploaded. It is 0 unless there are already files.
             int fCount = 0;
             try
             {
@@ -96,9 +86,12 @@ namespace SampleApp.Pages
             {
                 
             }
+            //This is where the zip file will be extracted
             var extractedPath = Path.Combine(_targetFilePath, "extracted", fCount.ToString());
             ZipFile.ExtractToDirectory(filePath, Path.Combine(_targetFilePath, "extracted", extractedPath));
+            //add the extracted file path to a dictionary that corrosponds to its file name
             BufferedSingleFileUploadPhysical.directories.Add(trustedFileNameForFileStorage, extractedPath);
+            //load in the gltf file and then save it as a glb to be transmitted
             var model = ModelRoot.Load(extractedPath + "/scene.gltf");
             model.SaveGLB(extractedPath + "/model.glb");
             return RedirectToPage("./Index");
